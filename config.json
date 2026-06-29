@@ -1,0 +1,8 @@
+{
+    "database": {
+        "user": "root",
+        "unix_socket": "/var/run/mysqld/mysqld.sock",
+        "database": "trafficdb",
+        "password": "Paritosh@2023"
+    }
+}
