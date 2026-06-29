@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SDMS Query Configuration",
+  "type": "object",
+  "required": ["query_id", "source", "filter", "group_by", "aggregations"],
+  "properties": {
+    "query_id": {
+      "type": "string",
+      "description": "Stable query identifier stored in query_repository.query_id."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["sensor_stream", "event_stream", "command_stream"]
+    },
+    "filter": {
+      "oneOf": [
+        { "$ref": "#/$defs/filter" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/filter" }
+        }
+      ]
+    },
+    "group_by": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "aggregations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "operation", "field"],
+        "properties": {
+          "name": { "$ref": "#/$defs/identifier" },
+          "operation": {
+            "type": "string",
+            "enum": ["sum", "count", "avg", "min", "max"]
+          },
+          "field": {
+            "oneOf": [
+              { "$ref": "#/$defs/identifier" },
+              { "const": "*" }
+            ]
+          }
+        }
+      }
+    },
+    "output_buffer": {
+      "type": "object",
+      "properties": {
+        "store_fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "summary_updates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target", "source", "operation"],
+        "properties": {
+          "target": { "$ref": "#/$defs/identifier" },
+          "source": { "$ref": "#/$defs/identifier" },
+          "operation": { "type": "string", "enum": ["increment", "max", "min", "replace"] }
+        }
+      }
+    },
+    "derived_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "formula"],
+        "properties": {
+          "name": { "$ref": "#/$defs/identifier" },
+          "formula": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "filter": {
+      "type": "object",
+      "required": ["field", "operator", "value"],
+      "properties": {
+        "field": { "$ref": "#/$defs/identifier" },
+        "operator": { "type": "string", "enum": ["=", "!=", "<>", ">", ">=", "<", "<="] },
+        "value": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            { "type": "null" }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SensorStreamInput>
+    <sensor_event>
+        <pkt_id>PKT_000327</pkt_id>
+        <intersection_id>I101</intersection_id>
+        <road_id>I101_R4</road_id>
+        <signal_id>I101_R4_TL</signal_id>
+        <vehicle_count>12</vehicle_count>
+        <avg_speed>39.6</avg_speed>
+        <occupancy>31.3</occupancy>
+        <ts>63</ts>
+    </sensor_event>
+    <sensor_event>
+        <pkt_id>PKT_000328</pkt_id>
+        <intersection_id>I101</intersection_id>
+        <road_id>I101_R3</road_id>
+        <signal_id>I101_R3_TL</signal_id>
+        <vehicle_count>8</vehicle_count>
+        <avg_speed>57.4</avg_speed>
+        <occupancy>79.8</occupancy>
+        <ts>63</ts>
+    </sensor_event>
+    <sensor_event>
+        <pkt_id>PKT_000329</pkt_id>
+        <intersection_id>I101</intersection_id>
+        <road_id>I101_R1</road_id>
+        <signal_id>I101_R1_TL</signal_id>
+        <vehicle_count>33</vehicle_count>
+        <avg_speed>45.4</avg_speed>
+        <occupancy>78.5</occupancy>
+        <ts>63</ts>
+    </sensor_event>
+</SensorStreamInput>

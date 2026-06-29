@@ -1,0 +1,59 @@
+[
+  {
+    "query_id": "IS-OCC-PKT",
+    "description": "Per-tick occupancy aggregates by intersection.",
+    "frequency_sec": 1,
+    "query_config": {
+      "query_id": "IS-OCC-PKT",
+      "source": "sensor_stream",
+      "filter": {
+        "field": "ts",
+        "operator": "=",
+        "value": "{CURRENT_TICK}"
+      },
+      "group_by": ["intersection_id"],
+      "aggregations": [
+        { "name": "s_occ", "operation": "sum", "field": "occupancy" },
+        { "name": "x_occ", "operation": "max", "field": "occupancy" },
+        { "name": "n_occ", "operation": "min", "field": "occupancy" },
+        { "name": "c_pkt", "operation": "count", "field": "*" }
+      ],
+      "output_buffer": {
+        "store_fields": ["intersection_id", "s_occ", "x_occ", "n_occ", "c_pkt"]
+      },
+      "derived_metrics": [
+        { "name": "avg_occ", "formula": "s_occ / c_pkt" }
+      ]
+    }
+  },
+  {
+    "query_id": "RD-SPEED-PKT",
+    "description": "Per-tick speed aggregates by road.",
+    "frequency_sec": 1,
+    "query_config": {
+      "query_id": "RD-SPEED-PKT",
+      "source": "sensor_stream",
+      "filter": {
+        "field": "ts",
+        "operator": "=",
+        "value": "{CURRENT_TICK}"
+      },
+      "group_by": ["road_id", "intersection_id"],
+      "aggregations": [
+        { "name": "s_spd", "operation": "sum", "field": "avg_speed" },
+        { "name": "x_spd", "operation": "max", "field": "avg_speed" },
+        { "name": "n_spd", "operation": "min", "field": "avg_speed" },
+        { "name": "c_pkt", "operation": "count", "field": "*" }
+      ],
+      "summary_updates": [
+        { "target": "pkt_count", "source": "c_pkt", "operation": "increment" },
+        { "target": "sum_speed", "source": "s_spd", "operation": "increment" },
+        { "target": "max_speed", "source": "x_spd", "operation": "max" },
+        { "target": "min_speed", "source": "n_spd", "operation": "min" }
+      ],
+      "derived_metrics": [
+        { "name": "avg_speed", "formula": "sum_speed / pkt_count" }
+      ]
+    }
+  }
+]

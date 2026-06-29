@@ -1,0 +1,298 @@
+:root {
+            --bg-dotted: #f4f1ea;
+            --primary-dark-blue: #1c3c87;
+            --primary-blue: #2b56b8;
+            --light-blue: #5584eb;
+            --text-light: #ffffff;
+            --card-radius: 12px;
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.15);
+            --shadow-sm: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background-color: var(--bg-dotted);
+            background-image: radial-gradient(#d5d0c4 2px, transparent 2px);
+            background-size: 30px 30px;
+            color: var(--text-light);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+	        /* Top Nav */
+        .top-nav {
+            background: var(--primary-dark-blue);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+            gap: 20px;
+        }
+
+	        .settings-container { position: absolute; right: 30px; display: flex; align-items: center; gap: 10px; }
+        .graph-launch-btn {
+            background: white; border: 1px solid rgba(28,60,135,0.18); color: var(--primary-dark-blue);
+            padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+        .graph-launch-btn:hover { background: #f3f6ff; }
+        .settings-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; transition: all 0.2s;
+        }
+        .settings-btn:hover { background: rgba(255,255,255,0.2); }
+        .top-nav h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex: 1; text-align: center; justify-content: center; }
+
+        /* SVG Canvas */
+        .svg-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        path.connection-line {
+            fill: none; stroke: var(--primary-blue); stroke-width: 3;
+            stroke-dasharray: 8, 8; opacity: 0.6; animation: dash 20s linear infinite;
+        }
+        @keyframes dash { to { stroke-dashoffset: -1000; } }
+
+        /* Windows Layout */
+        .workspace { flex: 1; position: relative; }
+        .panel {
+            background: var(--primary-blue); border-radius: var(--card-radius);
+            box-shadow: var(--shadow-md); position: absolute; padding: 20px;
+            border: 2px solid rgba(255,255,255,0.1); z-index: 20;
+            resize: both; overflow: auto; min-width: 200px; min-height: 100px;
+        }
+        .panel-title {
+            text-align: center; font-size: 14px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 20px; color: rgba(255,255,255,0.9);
+            cursor: move;
+            padding: 5px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 6px;
+        }
+
+        /* SDMS Controls */
+        #controls-panel { top: 30%; left: 5%; width: 350px; }
+        .btn-group { display: flex; gap: 15px; justify-content: center; }
+        .btn {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+            font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .sys-status { text-align: center; margin-top: 15px; font-size: 13px; }
+
+        /* Sensor Island */
+        #sensor-panel { top: 10%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+        .sensor-container { display: flex; gap: 15px; }
+        .sensor-card {
+            background: var(--light-blue); padding: 15px; border-radius: 12px;
+            text-align: center; width: 100px; cursor: grab; transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .sensor-card:hover { background: #6b93f2; transform: translateY(-5px); }
+        .sensor-icon {
+            font-size: 16px; font-weight: 600; margin-bottom: 10px;
+            background: rgba(255,255,255,0.2); width: 40px; height: 40px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;
+        }
+        .sensor-label { font-size: 12px; font-weight: 500; }
+
+        /* Dropped Sensors */
+        .dropped-sensor {
+            position: absolute; background: var(--light-blue); padding: 10px 15px;
+            border-radius: 30px; font-size: 12px; font-weight: 600;
+            box-shadow: var(--shadow-sm); z-index: 15; cursor: move;
+            display: flex; align-items: center; gap: 10px; border: 2px solid white;
+        }
+        .dropped-sensor .close-btn {
+            background: rgba(0,0,0,0.2); border: none; color: white; border-radius: 50%;
+            width: 20px; height: 20px; cursor: pointer; font-size: 10px;
+        }
+
+        /* Tables & Windows Panel */
+        #tables-panel { top: 35%; right: 5%; width: 750px; cursor: move; }
+        #tables-panel .table-view-container,
+        #tables-panel .table-icon-btn,
+        #tables-panel table {
+            cursor: default;
+        }
+        .table-icons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .table-icon-btn {
+            background: transparent; border: none; color: white; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 8px; transition: all 0.2s; width: 140px;
+        }
+        .table-icon-btn:hover, .table-icon-btn.active { transform: translateY(-3px); }
+        .table-icon-btn.active .icon-box { background: rgba(255,255,255,0.3); border-color: white; }
+        .icon-box {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            width: auto; padding: 8px 12px; min-width: 100px; min-height: 50px; border-radius: 12px; display: flex; align-items: center; 
+            justify-content: center; font-size: 16px; font-weight: bold; transition: all 0.2s;
+            text-align: center;
+        }
+        .table-label { font-size: 13px; font-weight: 500; text-align: center; }
+        
+        .table-view-container {
+            background: var(--primary-dark-blue); border-radius: 8px; padding: 20px; height: 450px;
+            overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .table-view { display: none; }
+        .table-view.active { display: block; }
+        .table-header { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #a5b4fc; }
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { color: rgba(255,255,255,0.7); font-weight: 600; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--primary-dark-blue); width: 400px; border-radius: 12px;
+            padding: 24px; color: white; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .settings-modal-content { width: 620px; max-height: 85vh; overflow-y: auto; }
+        .modal-title { font-size: 16px; margin-bottom: 20px; font-weight: 600; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: rgba(255,255,255,0.7); }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 8px 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px; color: white; outline: none;
+        }
+        .form-group textarea { min-height: 90px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; line-height: 1.4; }
+        .form-group select option { background: var(--primary-dark-blue); color: white; }
+        .window-settings-list { display: flex; flex-direction: column; gap: 12px; }
+        .window-setting-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px; padding: 14px;
+        }
+        .window-setting-title {
+            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 12px; color: #a5b4fc;
+        }
+        .window-setting-grid { display: grid; grid-template-columns: 1fr 110px 1fr; gap: 12px; }
+        .settings-loading { color: rgba(255,255,255,0.7); font-size: 13px; }
+
+        .query-modal-content { width: min(1120px, calc(100vw - 32px)); max-height: 92vh; overflow-y: auto; }
+        .query-modal-header {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 16px;
+        }
+        .query-modal-header .modal-title { margin-bottom: 5px; }
+        .modal-subtitle { color: rgba(255,255,255,0.65); font-size: 13px; }
+        .modal-close-btn {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
+            color: white; border-radius: 8px; padding: 8px 12px; cursor: pointer;
+        }
+        .modal-close-btn:hover { background: rgba(255,255,255,0.16); }
+        .query-editor-card,
+        .query-card {
+            background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px; padding: 22px; box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        }
+        .query-section-title {
+            margin: 18px 0 12px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+            text-transform: uppercase; color: #a5b4fc;
+        }
+        .query-editor-card .query-section-title { margin-top: 0; }
+        .query-form-grid { display: grid; grid-template-columns: minmax(260px, 1fr) 180px; gap: 16px; }
+        .query-primary-btn {
+            background: #10b981; border-color: #059669; width: 100%; justify-content: center; margin-top: 4px;
+        }
+        .queries-list { display: flex; flex-direction: column; gap: 16px; max-height: 620px; overflow-y: auto; padding-right: 4px; }
+        .query-card-header { display: flex; justify-content: space-between; gap: 14px; align-items: center; margin-bottom: 12px; }
+        .query-id-badge {
+            display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 10px;
+            background: rgba(16,185,129,0.18); color: #86efac; font-size: 12px; font-weight: 700;
+        }
+        .query-card-actions { display: flex; gap: 8px; }
+        .query-action-btn {
+            border: 1px solid rgba(255,255,255,0.16); border-radius: 8px; color: white;
+            padding: 7px 10px; cursor: pointer; font-size: 12px;
+        }
+        .query-save-btn { background: #5584eb; }
+        .query-delete-btn { background: #ef4444; }
+        .query-empty-state { color: rgba(255,255,255,0.65); text-align: center; padding: 24px; font-size: 13px; }
+        .query-meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .query-meta-pill {
+            border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.72);
+            border-radius: 999px; padding: 5px 9px; font-size: 12px;
+        }
+        .query-config-builder { display: flex; flex-direction: column; gap: 12px; }
+        .query-config-builder > .query-form-grid {
+            grid-template-columns: minmax(240px, 280px) minmax(520px, 1fr);
+            align-items: start;
+        }
+        .filter-row { display: grid; grid-template-columns: minmax(150px, 1.2fr) 82px minmax(150px, 1fr); gap: 8px; }
+        .filter-row select,
+        .filter-row input,
+        .aggregation-row select,
+        .aggregation-row input {
+            min-width: 0;
+            height: 36px;
+        }
+        .group-by-options {
+            display: flex; flex-wrap: wrap; gap: 8px; padding: 10px;
+            background: rgba(0,0,0,0.14); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+            max-height: 120px; overflow-y: auto;
+        }
+        .field-check {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+            padding: 6px 8px; border-radius: 999px; background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.82); white-space: nowrap;
+        }
+        .field-check input { width: auto; min-width: 14px; height: 14px; }
+        .aggregation-header {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 2px;
+        }
+        .aggregation-list { display: flex; flex-direction: column; gap: 8px; }
+        .aggregation-row {
+            display: grid; grid-template-columns: minmax(220px, 1fr) 140px auto;
+            gap: 12px; align-items: center;
+        }
+        .graph-side-panel {
+            position: fixed; top: 76px; right: 24px; width: min(560px, calc(100vw - 48px));
+            background: #ffffff; border: 1px solid rgba(28,60,135,0.16);
+            border-radius: 14px; padding: 18px; z-index: 1200; color: #172554;
+            box-shadow: 0 18px 48px rgba(0,0,0,0.28); display: none;
+        }
+        .graph-side-panel.active { display: block; }
+        .graph-panel-header {
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+            padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid rgba(28,60,135,0.14);
+        }
+        .graph-panel-header h3 { margin: 2px 0 0; font-size: 16px; }
+        .graph-panel-kicker { color: var(--primary-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .graph-side-panel .modal-close-btn {
+            color: #172554; background: #f8fafc; border-color: rgba(28,60,135,0.16);
+        }
+        .graph-side-panel .form-group label { color: rgba(23,37,84,0.72); }
+        .graph-side-panel .form-group input,
+        .graph-side-panel .form-group select {
+            background: #f8fafc; border-color: rgba(28,60,135,0.18); color: #172554;
+        }
+        .graph-side-panel .form-group select option { background: white; color: #172554; }
+        .graph-controls {
+            background: #f8fafc; border: 1px solid rgba(28,60,135,0.12);
+            border-radius: 12px; padding: 14px; margin-bottom: 14px;
+        }
+        .graph-control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .graph-draw-btn {
+            background: white; border: 1px solid rgba(28,60,135,0.18); color: var(--primary-dark-blue);
+            border-radius: 8px; padding: 10px 14px; width: 100%; cursor: pointer; font-weight: 700;
+        }
+        .graph-draw-btn:hover { background: #edf2ff; }
+        #graph-canvas {
+            width: 100%; height: 300px; display: block; background: #f8fafc;
+            border-radius: 10px; border: 1px solid rgba(28,60,135,0.12);
+        }
+        .graph-side-panel .query-empty-state { color: rgba(23,37,84,0.68); }

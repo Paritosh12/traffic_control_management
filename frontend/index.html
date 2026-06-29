@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Data Management System</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="top-nav">
+        <h1>Stream Data Management System</h1>
+        <div class="settings-container">
+            <button class="graph-launch-btn" onclick="openGraphPanel()">Graphs</button>
+            <button class="settings-btn" onclick="toggleModal(true)">
+                <img src="/svgs/setting.png" width="16" height="16" />
+                Settings
+            </button>
+        </div>
+    </div>
+
+    <div class="workspace" id="workspace" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <svg class="svg-container" id="svg-layer"></svg>
+
+        <!-- SDMS Control Panel -->
+        <div class="panel" id="controls-panel">
+            <div class="panel-title"><h4 id="current-workspace-title">Traffic Control System</h></div>
+            <div class="btn-group">
+                <button class="btn" style="background:#10b981; border-color:#059669;" onclick="startSystem()">Run</button>
+                <button class="btn" style="background:#ef4444; border-color:#dc2626;" onclick="stopSystem()">Stop</button>
+                <button class="btn" style="background:#f59e0b; border-color:#d97706;" onclick="resetSystem()">Reset</button>
+            </div>
+            <div class="sys-status">
+                <div>Status: <span id="sys-status-text" style="font-weight:600;color:#f59e0b;">Offline</span></div>
+                <div style="margin-top:5px; color:rgba(255,255,255,0.7);">
+                    System Time: <span id="sys-tick" style="color:white; font-family:monospace;">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- sensor island -->
+        <div class="panel" id="sensor-panel">
+            <div class="sensor-container">
+                
+            </div>
+        </div>
+
+        <!-- tables panel -->
+        <div class="panel" id="tables-panel">
+            <div class="panel-title">DATA WINDOWS</div>
+            <div class="table-icons">
+                <button class="table-icon-btn active" onclick="showTable('traffic-window', this)">
+                    <div class="icon-box" style="font-size: 10px;">TRAFFIC TABLE</div>
+                </button>
+                <button class="table-icon-btn" onclick="showTable('event-window', this)">
+                    <div class="icon-box" style="font-size: 10px;">EVENT TABLE</div>
+                </button>
+                <button class="table-icon-btn" onclick="showTable('command-table', this)">
+                    <div class="icon-box" style="font-size: 10px;">COMMAND TABLE</div>
+                </button>
+                <button class="table-icon-btn" onclick="showTable('output-buffer', this)">
+                    <div class="icon-box" style="font-size: 10px;">OUTPUT BUFFER</div>
+                </button>
+            </div>
+            <div class="table-view-container">
+                <div class="table-view active" id="view-traffic-window">
+                    <div class="table-header">ACTIVE TRAFFIC DATA</div>
+                    <table id="tbl-traffic-window">
+                        <thead><tr><th>PKT ID</th><th>Time</th><th>Road</th><th>Speed</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-view" id="view-event-window">
+                    <div class="table-header">ACTIVE EVENT STREAM</div>
+                    <table id="tbl-event-window">
+                        <thead><tr><th>EVT ID</th><th>Time</th><th>Road</th><th>Type</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-view" id="view-command-table">
+                    <div class="table-header">COMMAND TABLE</div>
+                    <table id="tbl-command-table">
+                        <thead><tr><th>CMD ID</th><th>Time</th><th>Action</th><th>Reason</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-view" id="view-output-buffer">
+                    <div class="table-header">OUTPUT BUFFER</div>
+                    <table id="tbl-output-buffer">
+                        <thead><tr><th>Query</th><th>Time</th><th>Result</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- settings modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content settings-modal-content">
+            <h2 class="modal-title">System Settings</h2>
+            <div id="window-settings-list" class="window-settings-list">
+                <div class="settings-loading">Loading window settings...</div>
+            </div>
+            <button class="btn" style="background: #5584eb; width: 100%; margin-top: 15px;" onclick="openQueryModal()">
+                Query Repository
+            </button>
+            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+                <button class="btn" style="border:1px solid rgba(255,255,255,0.3);background:transparent;" onclick="toggleModal(false)">Cancel</button>
+                <button class="btn" style="background:#5584eb;" onclick="saveWindowSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- query management modal -->
+    <div class="modal" id="query-modal">
+        <div class="modal-content query-modal-content">
+            <div class="query-modal-header">
+                <div>
+                    <h2 class="modal-title">Query Repository</h2>
+                    <p class="modal-subtitle">Create, edit, and schedule configuration-driven stream queries.</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeQueryModal()">Close</button>
+            </div>
+            
+            <!-- add new query form -->
+            <div class="query-editor-card" style="display:none;">
+                <h3 class="query-section-title">Add New Query</h3>
+                <div class="query-form-grid">
+                    <div class="form-group">
+                        <label>Query ID</label>
+                        <input type="text" id="new-query-id" placeholder="CQ-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Frequency</label>
+                        <input type="number" id="new-query-freq" value="30" min="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="new-query-desc" placeholder="Average speed per road">
+                </div>
+                <div class="query-config-builder" id="new-query-builder">
+                    <div class="query-form-grid">
+                        <div class="form-group">
+                            <label>Source Stream</label>
+                            <select data-field="source"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Filter</label>
+                            <div class="filter-row">
+                                <select data-field="filter-field"></select>
+                                <select data-field="filter-operator">
+                                    <option value="=">=</option>
+                                    <option value="!=">!=</option>
+                                    <option value="<>">&lt;&gt;</option>
+                                    <option value=">">&gt;</option>
+                                    <option value=">=">&gt;=</option>
+                                    <option value="<">&lt;</option>
+                                    <option value="<=">&lt;=</option>
+                                </select>
+                                <input type="text" data-field="filter-value" value="{CURRENT_TICK}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Group By</label>
+                        <div class="group-by-options" data-field="group-by"></div>
+                    </div>
+                    <div class="aggregation-header">
+                        <label>Aggregations</label>
+                        <button type="button" class="query-action-btn query-save-btn" onclick="addAggregationRow(document.getElementById('new-query-builder'))">Add Aggregation</button>
+                    </div>
+                    <div class="aggregation-list" data-field="aggregations"></div>
+                </div>
+                <button class="btn query-primary-btn" onclick="addNewQuery()">Add Query</button>
+            </div>
+
+            <!-- existing queries list -->
+            <h3 class="query-section-title">Existing Queries</h3>
+            <div id="queries-list" class="queries-list">
+                <p class="query-empty-state">Loading queries...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="graph-side-panel" id="graph-panel">
+        <div class="graph-panel-header">
+            <div>
+                <div class="graph-panel-kicker">Real-time Stream Analysis</div>
+                <h3 id="graph-title">Graph Builder</h3>
+            </div>
+            <button class="modal-close-btn" onclick="closeGraphPanel()">Close</button>
+        </div>
+        <div class="graph-controls">
+            <div class="form-group">
+                <label>Stream</label>
+                <select id="graph-stream">
+                    <option value="sensor">Sensor</option>
+                    <option value="event">Event</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Field</label>
+                <select id="graph-field"></select>
+            </div>
+            <div class="form-group">
+                <label>Metric</label>
+                <select id="graph-metric"></select>
+            </div>
+            <div class="form-group">
+                <label>Aggregate</label>
+                <select id="graph-aggregate">
+                    <option value="none">NONE</option>
+                    <option value="sum">SUM</option>
+                    <option value="count">COUNT</option>
+                    <option value="avg">AVG</option>
+                    <option value="min">MIN</option>
+                    <option value="max">MAX</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Field Value</label>
+                <input type="text" id="graph-field-value" placeholder="e.g. I101_R1">
+            </div>
+            <button class="graph-draw-btn" onclick="drawGranularGraph()">Draw Graph</button>
+        </div>
+        <canvas id="graph-canvas" width="520" height="300"></canvas>
+        <div id="graph-empty-state" class="query-empty-state">Select attributes and filters to visualize per-second buffer data.</div>
+    </div>
+
+    <script src="/script.js?v=8"></script>
+</body>
+</html>
